@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">AuthTest</string>
+    <string name="user_name">Enter User name</string>
+    <string name="password">Enter password</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">sign up</string>
+    <string name="email_id">Enter email id</string>
+    <string name="confirmation_code">Enter confirmation code</string>
+    <string name="confirm">verify</string>
+</resources>
