@@ -37,6 +37,10 @@ public class MainActivity extends AppCompatActivity {
         TextInputEditText passwordEditText = findViewById(R.id.password_edit_text);
         TextInputEditText confirmationEditText = findViewById(R.id.confirmation_code_edit_text);
 
+        emailIDEditText.setOnKeyListener((v, keyCode, event) -> handleKeyEvent(v, keyCode));
+        passwordEditText.setOnKeyListener((v, keyCode, event) -> handleKeyEvent(v, keyCode));
+        confirmationEditText.setOnKeyListener((v, keyCode, event) -> handleKeyEvent(v, keyCode));
+
 
         signUp.setOnClickListener(v -> {
 
