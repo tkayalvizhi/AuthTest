@@ -3,8 +3,8 @@ package com.example.authtest;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.amplifyframework.auth.AuthUserAttributeKey;
+import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
 import com.google.android.material.textfield.TextInputEditText;
@@ -20,6 +21,16 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+
+    public void toastMsg(String msg) {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                runOnUiThread(() -> Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show());
+            }
+        };
+        thread.start();
+    }
 
 
     @Override
@@ -40,6 +51,26 @@ public class MainActivity extends AppCompatActivity {
         emailIDEditText.setOnKeyListener((v, keyCode, event) -> handleKeyEvent(v, keyCode));
         passwordEditText.setOnKeyListener((v, keyCode, event) -> handleKeyEvent(v, keyCode));
         confirmationEditText.setOnKeyListener((v, keyCode, event) -> handleKeyEvent(v, keyCode));
+
+        Amplify.Auth.fetchAuthSession(
+                result -> {
+                    AWSCognitoAuthSession cognitoAuthSession = (AWSCognitoAuthSession) result;
+                    switch(cognitoAuthSession.getIdentityId().getType()) {
+                        case SUCCESS:
+                            Log.i("AuthQuickStart", "IdentityId: " + cognitoAuthSession.getIdentityId().getValue());
+                            break;
+                        case FAILURE:
+                            Log.i("AuthQuickStart", "IdentityId not present because: " + cognitoAuthSession.getIdentityId().getError().toString());
+
+                    }
+                    if (result.isSignedIn()) {
+                        Intent intent = new Intent(context, ProfileUpdateActivity.class);
+                        startActivity(intent);
+                    }
+
+                },
+                error -> Log.e("AmplifyQuickstart", error.toString())
+        );
 
 
         signUp.setOnClickListener(v -> {
@@ -73,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                         Thread thread = new Thread() {
                             public void run() {
                                 runOnUiThread(() -> Toast.makeText(context,
-                                        "Sign Up failed",
+                                        error.getMessage(),
                                         Toast.LENGTH_LONG).show());
                             }
                         };
@@ -95,18 +126,13 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("AuthQuickstart",
                                 result.isSignUpComplete() ?
                                         "Confirm signUp succeeded" : "Confirm sign up not complete");
-                        Thread thread = new Thread() {
-                            public void run() {
-                                runOnUiThread(() -> Toast.makeText(
-                                        context,
-                                        result.isSignUpComplete() ?
-                                                "Confirm signUp succeeded" : "Confirm sign up not complete",
-                                        Toast.LENGTH_LONG).show());
-                            }
-                        };
-                        thread.start();
+                        toastMsg(result.isSignUpComplete() ?
+                                "Confirm signUp succeeded" : "Confirm sign up not complete");
                     },
-                    error -> Log.e("AuthQuickstart", error.toString()));
+                    error -> {
+                        Log.e("AuthQuickstart", error.toString());
+                        toastMsg(error.getMessage());
+                    });
         });
 
         signIn.setOnClickListener(v -> {
@@ -123,24 +149,19 @@ public class MainActivity extends AppCompatActivity {
                                         "Sign in succeeded" : "Sign in not complete");
                         Thread thread = new Thread() {
                             public void run() {
-                                runOnUiThread(() -> Toast.makeText(context,
-                                        result.isSignInComplete() ?
-                                                "Sign in succeeded" : "Sign in not complete",
-                                        Toast.LENGTH_LONG).show());
+                                runOnUiThread(() -> {
+                                    toastMsg(result.isSignInComplete() ?
+                                            "Sign in succeeded" : "Sign in not complete");
+                                    Intent intent = new Intent(context, ProfileUpdateActivity.class);
+                                    startActivity(intent);
+                                });
                             }
                         };
                         thread.start();
                     },
                     error -> {
                         Log.e("AuthQuickstart", error.toString());
-                        Thread thread = new Thread() {
-                            public void run() {
-                                runOnUiThread(() -> Toast.makeText(context,
-                                        error.toString(),
-                                        Toast.LENGTH_LONG).show());
-                            }
-                        };
-                        thread.start();
+                        toastMsg(error.getMessage());
                     });
         });
     }
@@ -155,4 +176,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
+
+
 }

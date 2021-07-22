@@ -7,4 +7,6 @@
     <string name="email_id">Enter email id</string>
     <string name="confirmation_code">Enter confirmation code</string>
     <string name="confirm">verify</string>
+    <string name="update_profile">inside update profile page</string>
+    <string name="sign_out">sign out</string>
 </resources>
