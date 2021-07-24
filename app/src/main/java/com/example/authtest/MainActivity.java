@@ -12,15 +12,20 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+
 import com.amplifyframework.auth.AuthUserAttributeKey;
 import com.amplifyframework.auth.cognito.AWSCognitoAuthSession;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
+
 import com.amplifyframework.core.Amplify;
+
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+
+
 
     public void toastMsg(String msg) {
         Thread thread = new Thread() {
@@ -32,12 +37,39 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
     }
 
+    private void fetchAuthSession() {
+        Context context = getApplicationContext();
+        Amplify.Auth.fetchAuthSession(
+                result -> {
+                    AWSCognitoAuthSession cognitoAuthSession = (AWSCognitoAuthSession) result;
+                    switch(cognitoAuthSession.getIdentityId().getType()) {
+                        case SUCCESS:
+                            Log.i("AuthQuickStart", "IdentityId: " + cognitoAuthSession.getIdentityId().getValue());
+                            break;
+                        case FAILURE:
+                            assert cognitoAuthSession.getIdentityId().getError() != null;
+                            Log.i("AuthQuickStart", "IdentityId not present because: " + cognitoAuthSession.getIdentityId().getError().toString());
+
+                    }
+                    if (result.isSignedIn()) {
+                        Intent intent = new Intent(context, ProfileUpdateActivity.class);
+                        // intent.putExtra("IdentityId", cognitoAuthSession.getIdentityId().getValue());
+                        startActivity(intent);
+                    }
+
+                },
+                error -> Log.e("AmplifyQuickstart", error.toString())
+        );
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Context context = getApplicationContext();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Context context = getApplicationContext();
+
 
 
         Button signUp = findViewById(R.id.sign_up);
@@ -52,25 +84,7 @@ public class MainActivity extends AppCompatActivity {
         passwordEditText.setOnKeyListener((v, keyCode, event) -> handleKeyEvent(v, keyCode));
         confirmationEditText.setOnKeyListener((v, keyCode, event) -> handleKeyEvent(v, keyCode));
 
-        Amplify.Auth.fetchAuthSession(
-                result -> {
-                    AWSCognitoAuthSession cognitoAuthSession = (AWSCognitoAuthSession) result;
-                    switch(cognitoAuthSession.getIdentityId().getType()) {
-                        case SUCCESS:
-                            Log.i("AuthQuickStart", "IdentityId: " + cognitoAuthSession.getIdentityId().getValue());
-                            break;
-                        case FAILURE:
-                            Log.i("AuthQuickStart", "IdentityId not present because: " + cognitoAuthSession.getIdentityId().getError().toString());
-
-                    }
-                    if (result.isSignedIn()) {
-                        Intent intent = new Intent(context, ProfileUpdateActivity.class);
-                        startActivity(intent);
-                    }
-
-                },
-                error -> Log.e("AmplifyQuickstart", error.toString())
-        );
+        fetchAuthSession();
 
 
         signUp.setOnClickListener(v -> {
@@ -98,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         };
                         thread.start();
+
                     },
                     error -> {
                         Log.e("AuthQuickStart", "Sign up failed", error);
@@ -128,6 +143,9 @@ public class MainActivity extends AppCompatActivity {
                                         "Confirm signUp succeeded" : "Confirm sign up not complete");
                         toastMsg(result.isSignUpComplete() ?
                                 "Confirm signUp succeeded" : "Confirm sign up not complete");
+                        // create profile
+
+
                     },
                     error -> {
                         Log.e("AuthQuickstart", error.toString());
@@ -147,17 +165,9 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("AuthQuickstart",
                                 result.isSignInComplete() ?
                                         "Sign in succeeded" : "Sign in not complete");
-                        Thread thread = new Thread() {
-                            public void run() {
-                                runOnUiThread(() -> {
-                                    toastMsg(result.isSignInComplete() ?
-                                            "Sign in succeeded" : "Sign in not complete");
-                                    Intent intent = new Intent(context, ProfileUpdateActivity.class);
-                                    startActivity(intent);
-                                });
-                            }
-                        };
-                        thread.start();
+                        toastMsg(result.isSignInComplete() ?
+                                "Sign in succeeded" : "Sign in not complete");
+                        fetchAuthSession();
                     },
                     error -> {
                         Log.e("AuthQuickstart", error.toString());
