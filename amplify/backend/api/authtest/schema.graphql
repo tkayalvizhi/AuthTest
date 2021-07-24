@@ -1,0 +1,17 @@
+type Profile
+  @model
+  @key(name: "profileByOwner", fields: ["owner"], queryField: "profileByOwner")
+  @auth(
+    rules: [
+      { allow: owner}]
+  )
+{
+  email: String!
+  owner: String!
+  first_name: String
+  last_name: String
+  address: String
+  ph_number: String
+  profile_picture: String
+}
+

@@ -1,0 +1,43 @@
+# this is an auto generated file. This will be overwritten
+subscription OnCreateProfile($owner: String!) {
+  onCreateProfile(owner: $owner) {
+    id
+    email
+    owner
+    first_name
+    last_name
+    address
+    ph_number
+    profile_picture
+    createdAt
+    updatedAt
+  }
+}
+subscription OnUpdateProfile($owner: String!) {
+  onUpdateProfile(owner: $owner) {
+    id
+    email
+    owner
+    first_name
+    last_name
+    address
+    ph_number
+    profile_picture
+    createdAt
+    updatedAt
+  }
+}
+subscription OnDeleteProfile($owner: String!) {
+  onDeleteProfile(owner: $owner) {
+    id
+    email
+    owner
+    first_name
+    last_name
+    address
+    ph_number
+    profile_picture
+    createdAt
+    updatedAt
+  }
+}

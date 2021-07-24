@@ -1,0 +1,52 @@
+# this is an auto generated file. This will be overwritten
+mutation CreateProfile(
+  $input: CreateProfileInput!
+  $condition: ModelProfileConditionInput
+) {
+  createProfile(input: $input, condition: $condition) {
+    id
+    email
+    owner
+    first_name
+    last_name
+    address
+    ph_number
+    profile_picture
+    createdAt
+    updatedAt
+  }
+}
+mutation UpdateProfile(
+  $input: UpdateProfileInput!
+  $condition: ModelProfileConditionInput
+) {
+  updateProfile(input: $input, condition: $condition) {
+    id
+    email
+    owner
+    first_name
+    last_name
+    address
+    ph_number
+    profile_picture
+    createdAt
+    updatedAt
+  }
+}
+mutation DeleteProfile(
+  $input: DeleteProfileInput!
+  $condition: ModelProfileConditionInput
+) {
+  deleteProfile(input: $input, condition: $condition) {
+    id
+    email
+    owner
+    first_name
+    last_name
+    address
+    ph_number
+    profile_picture
+    createdAt
+    updatedAt
+  }
+}
