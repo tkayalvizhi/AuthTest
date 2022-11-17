@@ -1,5 +1,7 @@
 # AuthTest
 
+AuthTest is a Mobile App login sequence developed using Java 
+
 Fetch Auth session:
 AWSCognitoAuthSession{isSignedIn=true, awsCredentials=AuthSessionResult{value=com.amazonaws.auth.BasicSessionCredentials@3e14a01, error=null, type=SUCCESS}
 
